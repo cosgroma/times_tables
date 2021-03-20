@@ -13,7 +13,7 @@ pg.setConfigOptions(antialias=True)
 
 class ModuloCircle(object):
   """docstring for ModuloCircle"""
-  def __init__(self, radius, num_points):
+  def __init__(self, radius, num_points, mult_factor):
     super(ModuloCircle, self).__init__()
 
     self.pw = pg.PlotWidget(title="Modulo Circle")
@@ -26,7 +26,7 @@ class ModuloCircle(object):
     self.num_points = num_points
     self.circ_size = self.num_points**3
 
-    self.mult_factor = 2
+    self.mult_factor = mult_factor
     self.build_circle()
     self.plot_points()
     self.add_lines()
@@ -70,8 +70,6 @@ class ModuloCircle(object):
     for idx in range(0, self.num_points):
       if idx >= len(self.lines):
         self.lines.append(self.pw.plot())
-      
-      # self.lines[idx].setData()
 
     for idx in range(0, self.num_points):
       nindx = (idx * self.mult_factor) % self.num_points
@@ -80,9 +78,14 @@ class ModuloCircle(object):
           [self.points[idx][1], self.points[nindx][1]]
           )  
 
-  def update_plot(self,num_points):
+  def update_num_points(self, num_points):
     self.clear_lines()
     self.num_points = num_points
+    self.update_points()
+
+  def update_mult_factor(self, mult_factor):
+    self.clear_lines()
+    self.mult_factor = mult_factor
     self.update_points()
 
 
@@ -91,19 +94,36 @@ class TimesTables(QWidget):
   def __init__(self, parent=None):
     super(TimesTables, self).__init__(parent=parent)
     self.verticalLayout = QVBoxLayout(self)
-    self.mod_circle = ModuloCircle(1, 10)
+    initial_num_points = 200
+    initial_mult_factor = 2
+
+    self.mod_circle = ModuloCircle(1, initial_num_points, initial_mult_factor)
     self.verticalLayout.addWidget(self.mod_circle.pw)
-    self.slider = QSlider(self)
-    self.slider.setOrientation(Qt.Horizontal)
-    self.slider.setMinimum(10)
-    self.slider.setMaximum(200)
-    self.verticalLayout.addWidget(self.slider)
+    
+    self.num_points_slider = QSlider(self)
+    self.num_points_slider.setOrientation(Qt.Horizontal)
+    self.num_points_slider.setMinimum(initial_num_points)
+    self.num_points_slider.setMaximum(200)
+    self.num_points_slider.valueChanged.connect(self.set_num_points)
+    self.verticalLayout.addWidget(self.num_points_slider)
+
+    
+    self.mult_factor_slider = QSlider(self)
+    self.mult_factor_slider.setOrientation(Qt.Horizontal)
+    self.mult_factor_slider.setMinimum(initial_mult_factor)
+    self.mult_factor_slider.setMaximum(200-1)
+    self.mult_factor_slider.valueChanged.connect(self.set_mult_factor)
+    self.verticalLayout.addWidget(self.mult_factor_slider)
+    
+
     self.resize(QtCore.QSize(500, 500))
 
-    self.slider.valueChanged.connect(self.setLabelValue)
 
-  def setLabelValue(self, value):
-    self.mod_circle.update_plot(value)
+  def set_mult_factor(self, value):
+    self.mod_circle.update_mult_factor(value)
+
+  def set_num_points(self, value):
+    self.mod_circle.update_num_points(value)
     
 
     
