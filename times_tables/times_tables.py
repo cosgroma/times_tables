@@ -94,7 +94,7 @@ class TimesTables(QWidget):
   def __init__(self, parent=None):
     super(TimesTables, self).__init__(parent=parent)
     self.verticalLayout = QVBoxLayout(self)
-    initial_num_points = 200
+    initial_num_points = 10
     initial_mult_factor = 2
 
     self.mod_circle = ModuloCircle(1, initial_num_points, initial_mult_factor)
@@ -103,7 +103,7 @@ class TimesTables(QWidget):
     self.num_points_slider = QSlider(self)
     self.num_points_slider.setOrientation(Qt.Horizontal)
     self.num_points_slider.setMinimum(initial_num_points)
-    self.num_points_slider.setMaximum(200)
+    self.num_points_slider.setMaximum(300)
     self.num_points_slider.valueChanged.connect(self.set_num_points)
     self.verticalLayout.addWidget(self.num_points_slider)
 
@@ -111,7 +111,7 @@ class TimesTables(QWidget):
     self.mult_factor_slider = QSlider(self)
     self.mult_factor_slider.setOrientation(Qt.Horizontal)
     self.mult_factor_slider.setMinimum(initial_mult_factor)
-    self.mult_factor_slider.setMaximum(200-1)
+    self.mult_factor_slider.setMaximum(initial_num_points-1)
     self.mult_factor_slider.valueChanged.connect(self.set_mult_factor)
     self.verticalLayout.addWidget(self.mult_factor_slider)
     
@@ -122,8 +122,9 @@ class TimesTables(QWidget):
   def set_mult_factor(self, value):
     self.mod_circle.update_mult_factor(value)
 
-  def set_num_points(self, value):
-    self.mod_circle.update_num_points(value)
+  def set_num_points(self, num_points):
+    self.mult_factor_slider.setMaximum(num_points - 1)
+    self.mod_circle.update_num_points(num_points)
     
 
     
